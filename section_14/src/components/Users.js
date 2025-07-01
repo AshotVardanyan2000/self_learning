@@ -25,8 +25,6 @@ class Users extends Component {
   }
 
   render() {
-    console.log(this.state);
-
     const usersList = (
       <ul>
         {DUMMY_USERS.map((user) => (

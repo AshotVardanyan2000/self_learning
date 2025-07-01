@@ -12,8 +12,6 @@ function App() {
   });
 
   const handleChange = (inputIdentifier, newValue) => {
-    console.log(inputIdentifier, newValue, 8);
-
     setUserInput((prevState) => ({
       ...prevState,
       [inputIdentifier]: +newValue,

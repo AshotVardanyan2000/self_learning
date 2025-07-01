@@ -1,25 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import Places from './Places.jsx';
-import { use } from 'react';
+import { sortPlacesByDistance } from '../loc.js';
+import { fetchAvailablePlaces } from '../http.js';
 
 export default function AvailablePlaces({ onSelectPlace }) {
   const [availablePlaces, setAvailablePlaces] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch('http://localhost:3001/places');
-        const data = await response.json();
-        setAvailablePlaces(data.places);
+        setIsLoading(true);
+        const places = await fetchAvailablePlaces();
+
+        navigator.geolocation.getCurrentPosition((position) => {
+          const sortedPlaces = sortPlacesByDistance(places, position.coords.latitude, position.coords.longitude);
+
+          setAvailablePlaces(sortedPlaces);
+        });
       } catch (error) {
         console.error('Error fetching places:', error);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
+
   return (
     <Places
       title="Available Places"
       places={availablePlaces}
+      isLoading={isLoading}
+      loadingText="Loading places..."
       fallbackText="No places available."
       onSelectPlace={onSelectPlace}
     />

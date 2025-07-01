@@ -5,6 +5,8 @@ import Modal from './components/Modal.jsx';
 import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import AvailablePlaces from './components/AvailablePlaces.jsx';
+import { updateUserPlaces } from './http.js';
+import { use } from 'react';
 
 function App() {
   const selectedPlace = useRef();
@@ -32,12 +34,12 @@ function App() {
       }
       return [selectedPlace, ...prevPickedPlaces];
     });
+
+    updateUserPlaces([selectedPlace, ...userPlaces]);
   }
 
   const handleRemovePlace = useCallback(async function handleRemovePlace() {
-    setUserPlaces((prevPickedPlaces) =>
-      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
-    );
+    setUserPlaces((prevPickedPlaces) => prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id));
 
     setModalIsOpen(false);
   }, []);
@@ -45,19 +47,13 @@ function App() {
   return (
     <>
       <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
-        <DeleteConfirmation
-          onCancel={handleStopRemovePlace}
-          onConfirm={handleRemovePlace}
-        />
+        <DeleteConfirmation onCancel={handleStopRemovePlace} onConfirm={handleRemovePlace} />
       </Modal>
 
       <header>
         <img src={logoImg} alt="Stylized globe" />
         <h1>PlacePicker</h1>
-        <p>
-          Create your personal collection of places you would like to visit or
-          you have visited.
-        </p>
+        <p>Create your personal collection of places you would like to visit or you have visited.</p>
       </header>
       <main>
         <Places
